@@ -9,30 +9,44 @@ import android.widget.TextView;
 public class MainActivity extends Activity {
 
 
+    private AppController controller;
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
         super.onCreate(savedInstanceState);
 
+
         setContentView(R.layout.activity_main);
 
 
-        TextView status = findViewById(R.id.deviceStatus);
+        controller = new AppController();
 
 
-        Button scanButton = findViewById(R.id.scanButton);
+        TextView status =
+                findViewById(R.id.deviceStatus);
 
-        Button connectButton = findViewById(R.id.connectButton);
 
-        Button selectApkButton = findViewById(R.id.selectApkButton);
+        Button scanButton =
+                findViewById(R.id.scanButton);
 
-        Button installButton = findViewById(R.id.installButton);
+
+        Button connectButton =
+                findViewById(R.id.connectButton);
 
 
 
         scanButton.setOnClickListener(v -> {
 
-            status.setText("设备状态：正在扫描...");
+
+            controller.startService();
+
+
+            status.setText(
+                    controller.getStatus()
+            );
+
 
         });
 
@@ -40,25 +54,15 @@ public class MainActivity extends Activity {
 
         connectButton.setOnClickListener(v -> {
 
-            status.setText("设备状态：连接中...");
+
+            status.setText(
+                    "等待车机连接..."
+            );
+
 
         });
 
-
-
-        selectApkButton.setOnClickListener(v -> {
-
-            status.setText("请选择APK文件");
-
-        });
-
-
-
-        installButton.setOnClickListener(v -> {
-
-            status.setText("正在安装应用...");
-
-        });
 
     }
+
 }
