@@ -13,6 +13,15 @@ public class AppController {
     private LogManager logManager;
 
 
+    private HotspotManager hotspotManager;
+
+    private ApkDownloadHandler apkDownloadHandler;
+
+    private InstallPageGenerator pageGenerator;
+
+    private ServiceStatus serviceStatus;
+
+
 
     public AppController(){
 
@@ -26,6 +35,15 @@ public class AppController {
         logManager = new LogManager();
 
 
+        hotspotManager = new HotspotManager();
+
+        apkDownloadHandler = new ApkDownloadHandler();
+
+        pageGenerator = new InstallPageGenerator();
+
+        serviceStatus = new ServiceStatus();
+
+
     }
 
 
@@ -36,6 +54,21 @@ public class AppController {
         dnsServer.start();
 
         httpServer.start();
+
+
+        serviceStatus.setDnsRunning(
+                dnsServer.isRunning()
+        );
+
+
+        serviceStatus.setWebRunning(
+                httpServer.isRunning()
+        );
+
+
+        serviceStatus.setNetworkReady(
+                hotspotManager.getLocalIp() != null
+        );
 
 
         logManager.addLog(
@@ -53,19 +86,57 @@ public class AppController {
 
 
 
-    public String getStatus(){
-
+    public String getLogs(){
 
         return logManager.getLogs();
-
 
     }
 
 
 
-    public NetworkManager getNetworkManager(){
+    public ServiceStatus getServiceStatus(){
 
-        return networkManager;
+        return serviceStatus;
+
+    }
+
+
+
+    public HotspotManager getHotspotManager(){
+
+        return hotspotManager;
+
+    }
+
+
+
+    public ApkDownloadHandler getApkDownloadHandler(){
+
+        return apkDownloadHandler;
+
+    }
+
+
+
+    public InstallPageGenerator getPageGenerator(){
+
+        return pageGenerator;
+
+    }
+
+
+
+    public DnsServer getDnsServer(){
+
+        return dnsServer;
+
+    }
+
+
+
+    public HttpServer getHttpServer(){
+
+        return httpServer;
 
     }
 
