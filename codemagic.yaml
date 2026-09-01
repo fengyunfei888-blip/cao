@@ -1,0 +1,15 @@
+workflows:
+  android-build:
+    name: CarDeployAssistant Build
+
+    environment:
+      java: 17
+
+    scripts:
+      - name: Build APK
+        script: |
+          gradle wrapper --gradle-version 8.7
+          ./gradlew assembleDebug --stacktrace
+
+    artifacts:
+      - app/build/outputs/apk/debug/*.apk
