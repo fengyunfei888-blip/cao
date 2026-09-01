@@ -6,20 +6,30 @@ public class AppController {
 
     private DnsServer dnsServer;
 
+    private UdpDnsServer udpDnsServer;
+
     private HttpServer httpServer;
 
-    private NetworkManager networkManager;
 
-    private LogManager logManager;
-
-
-    private HotspotManager hotspotManager;
+    private ApkManager apkManager;
 
     private ApkDownloadHandler apkDownloadHandler;
 
-    private InstallPageGenerator pageGenerator;
+
+    private NetworkManager networkManager;
+
+    private HotspotManager hotspotManager;
+
+
+    private LogManager logManager;
 
     private ServiceStatus serviceStatus;
+
+
+    private PermissionManager permissionManager;
+
+
+    private ServiceManager serviceManager;
 
 
 
@@ -28,117 +38,168 @@ public class AppController {
 
         dnsServer = new DnsServer();
 
-        httpServer = new HttpServer();
 
-        networkManager = new NetworkManager();
-
-        logManager = new LogManager();
+        DnsPacketParser parser =
+                new DnsPacketParser();
 
 
-        hotspotManager = new HotspotManager();
+        DnsRuleManager ruleManager =
+                new DnsRuleManager();
 
-        apkDownloadHandler = new ApkDownloadHandler();
 
-        pageGenerator = new InstallPageGenerator();
+        udpDnsServer =
+                new UdpDnsServer(
+                        parser,
+                        ruleManager
+                );
 
-        serviceStatus = new ServiceStatus();
+
+
+        httpServer =
+                new HttpServer();
+
+
+
+        apkManager =
+                new ApkManager();
+
+
+
+        apkDownloadHandler =
+                new ApkDownloadHandler();
+
+
+
+        networkManager =
+                new NetworkManager();
+
+
+
+        hotspotManager =
+                new HotspotManager();
+
+
+
+        logManager =
+                new LogManager();
+
+
+
+        serviceStatus =
+                new ServiceStatus();
+
+
+
+        serviceManager =
+                new ServiceManager(
+                        udpDnsServer,
+                        httpServer,
+                        logManager,
+                        serviceStatus
+                );
 
 
     }
 
 
 
-    public void startService(){
+
+    public void start(){
 
 
-        dnsServer.start();
-
-        httpServer.start();
+        serviceManager.startAll();
 
 
-        serviceStatus.setDnsRunning(
-                dnsServer.isRunning()
-        );
-
-
-        serviceStatus.setWebRunning(
-                httpServer.isRunning()
-        );
-
-
-        serviceStatus.setNetworkReady(
-                hotspotManager.getLocalIp() != null
+        logManager.addLog(
+                "车机部署服务启动"
         );
 
 
         logManager.addLog(
-                "DNS服务启动"
-        );
-
-
-        logManager.addLog(
-                "Web服务启动:"
-                + httpServer.getUrl()
+                "访问地址:"
+                + hotspotManager.getWebAddress()
         );
 
 
     }
+
+
+
+
+    public void stop(){
+
+
+        serviceManager.stopAll();
+
+
+    }
+
+
+
+
+    public String getStatus(){
+
+
+        return serviceStatus.getStatus();
+
+
+    }
+
 
 
 
     public String getLogs(){
 
+
         return logManager.getLogs();
 
-    }
-
-
-
-    public ServiceStatus getServiceStatus(){
-
-        return serviceStatus;
 
     }
 
 
 
-    public HotspotManager getHotspotManager(){
 
-        return hotspotManager;
+    public ApkManager getApkManager(){
+
+
+        return apkManager;
+
 
     }
+
 
 
 
     public ApkDownloadHandler getApkDownloadHandler(){
 
+
         return apkDownloadHandler;
 
-    }
-
-
-
-    public InstallPageGenerator getPageGenerator(){
-
-        return pageGenerator;
 
     }
 
 
 
-    public DnsServer getDnsServer(){
 
-        return dnsServer;
+    public NetworkManager getNetworkManager(){
+
+
+        return networkManager;
+
+
+    }
+
+
+
+
+    public HotspotManager getHotspotManager(){
+
+
+        return hotspotManager;
+
 
     }
 
-
-
-    public HttpServer getHttpServer(){
-
-        return httpServer;
-
-    }
 
 
 }
